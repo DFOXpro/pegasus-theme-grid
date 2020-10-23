@@ -154,6 +154,10 @@ FocusScope {
                 }
             }
         }
+        
+        Component.onCompleted: {
+            positionViewAtIndex(currentIndex, GridView.Contain);
+        }        
     }
 
 
