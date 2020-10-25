@@ -64,12 +64,16 @@ FocusScope {
 
         if (api.keys.isPrevPage(event)) {
             event.accepted = true;
+            if (api.memory.get(CONSTANTS.ENABLE_POSITIONS)) savePosition();            
             topbar.prev();
+            if (api.memory.get(CONSTANTS.ENABLE_POSITIONS)) loadPosition();
             return;
         }
         if (api.keys.isNextPage(event)) {
             event.accepted = true;
+            if (api.memory.get(CONSTANTS.ENABLE_POSITIONS)) savePosition();            
             topbar.next();
+            if (api.memory.get(CONSTANTS.ENABLE_POSITIONS)) loadPosition();
             return;
         }
         if (api.keys.isDetails(event)) {
@@ -269,6 +273,7 @@ FocusScope {
         if (!api.memory.get(CONSTANTS.ENABLE_LAST_OPEN)) {
             topbar.currentIndex = 0;
             gamegrid.currentIndex = 0;
+            if (api.memory.get(CONSTANTS.ENABLE_POSITIONS)) loadPosition();
             gamegrid.memoryLoaded = true;
             return
         }
@@ -292,11 +297,40 @@ FocusScope {
             .games
             .toVarArray()
             .findIndex(g => g.title === last_game);
-        if (last_game_idx < 0)
+        if (last_game_idx < 0) {
+            if (api.memory.get(CONSTANTS.ENABLE_POSITIONS)) loadPosition();
             return;
+        }
 
         gamegrid.currentIndex = last_game_idx;
         gamegrid.memoryLoaded = true;
+    }
+
+    Component.onDestruction: {
+        if (api.memory.get(CONSTANTS.ENABLE_POSITIONS)) savePosition();
+    }
+
+    function clearPositions() {
+        for (var i = 0; i < allCollections.length; i++) {
+            api.memory.unset('collection' + i + 'GameIndex');
+        }
+    }
+
+    function clearPositionsIfNeeded() {
+        if ((api.memory.get('collectionCount') || 0) != allCollections.length) {
+            api.memory.set('collectionCount', allCollections.length);        
+            clearPositions();
+        }
+    }    
+
+    function savePosition() {
+        clearPositionsIfNeeded();
+        api.memory.set('collection' + topbar.currentIndex + 'GameIndex', gamegrid.currentIndex);
+    }
+
+    function loadPosition() {
+        clearPositionsIfNeeded();
+        gamegrid.currentIndex = api.memory.get('collection' + topbar.currentIndex + 'GameIndex') || 0;
     }
 
     function launchGame() {

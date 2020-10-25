@@ -48,7 +48,7 @@ FocusScope {
             value: api.memory.get(CONSTANTS.MAIN_COLOUR) || ''
             onValueChange: updateColour()
 
-            KeyNavigation.up: itemLastOpen
+            KeyNavigation.up: itemPositions
             KeyNavigation.down: itemFavorites
         }
 
@@ -133,8 +133,20 @@ FocusScope {
             onCheckedChange: updateLastOpen()
 
             KeyNavigation.up: itemHideSupport
-            KeyNavigation.down: itemColour
+            KeyNavigation.down: itemPositions
         }
+
+        CheckBox {
+            id: itemPositions
+            text: "Keep position within collections"
+            textColor: root.textColor
+            fontSize: content.normalTextSize
+            checked: api.memory.get(CONSTANTS.ENABLE_POSITIONS) || false
+            onCheckedChange: updatePositions()
+
+            KeyNavigation.up: itemLastOpen
+            KeyNavigation.down: itemColour
+        }        
     }
 
     function updateColour() {
@@ -164,5 +176,9 @@ FocusScope {
             api.memory.set('collection', '')
             api.memory.set('game', '')
         }
+    }
+    function updatePositions() {
+        api.memory.set(CONSTANTS.ENABLE_POSITIONS, itemPositions.checked);
+        if (!itemPositions.checked) clearPositions();
     }
 }
