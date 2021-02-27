@@ -101,7 +101,7 @@ FocusScope {
         }
 
         // Retroid Joystick
-        if(event.key == 0) {
+        if(event.key == 0 && !api.memory.get(CONSTANTS.DISABLE_GUIDE)) {
             event.accepted = true
             bottombar.toggleHelp()
             return;

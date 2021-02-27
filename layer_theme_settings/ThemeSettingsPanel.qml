@@ -48,7 +48,7 @@ FocusScope {
             value: api.memory.get(CONSTANTS.MAIN_COLOUR) || ''
             onValueChange: updateColour()
 
-            KeyNavigation.up: itemLastOpen
+            KeyNavigation.up: itemDisableGuide
             KeyNavigation.down: itemFavorites
         }
 
@@ -133,6 +133,18 @@ FocusScope {
             onCheckedChange: updateLastOpen()
 
             KeyNavigation.up: itemHideSupport
+            KeyNavigation.down: itemDisableGuide
+        }
+
+        CheckBox {
+            id: itemDisableGuide
+            text: "Disable guide"
+            textColor: root.textColor
+            fontSize: content.normalTextSize
+            checked: api.memory.get(CONSTANTS.DISABLE_GUIDE) || false
+            onCheckedChange: updateDisableGuide()
+
+            KeyNavigation.up: itemLastOpen
             KeyNavigation.down: itemColour
         }
     }
@@ -164,5 +176,8 @@ FocusScope {
             api.memory.set('collection', '')
             api.memory.set('game', '')
         }
+    }
+    function updateDisableGuide() {
+        api.memory.set(CONSTANTS.DISABLE_GUIDE, itemDisableGuide.checked)        
     }
 }
